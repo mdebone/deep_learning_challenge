@@ -8,7 +8,9 @@ Next up was the classification count, there were 71 values, and although the sta
 So I decided to keep the 9 values that were used in the application type, and grouped the rest into an other category, so greater than 194, actually greater than 190 was specified as the classifcations to replace value. I then ran the one hot encoder, merged it with the original application df,
 and then tropped the originals that weren't numerical.
 
-I decided on the application Is Succesful for the features and target arrays, and there was no issue with the standard scalar instance
+I decided on the application Is Succesful for the features and target arrays, and there was no issue with the standard scalar instance.
+
+Forgot to call the 5 period frequency for the fit statement, and so updated the starter code to accomidate the specification, got it to print and reuploaded.
 
 
 Step 2: Comppile, Train and Evaluate the Model
