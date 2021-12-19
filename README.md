@@ -1,95 +1,43 @@
-# deep_learning_challenge
+Step 1: PreProcess the data
 
-# Deep Learning Homework: Charity Funding Predictor
+Okay so I successfully removed the EIN and NAME columns, as the provided no value as instructed. I then ran the application_df.nunique print function on the dataframe to see what the number of values were for each column.
+That was not difficult, although the Application type and the Classification type stood out immediately as needing to be reduced as the number of values in them was greater than 10, it specifies 9 in the instructions. 
+First to go were the application_type values, there were 17, and replaced values that were higher than 528, everything else was grouped into an other category and the number of values for that column was 9 unique values when finished.
 
-## Background
+Next up was the classification count, there were 71 values, and although the starter code specified that maybe looking at values greater than 1 would be helpful, in the end it still left way to many values to keep, it left 45 unique values.
+So I decided to keep the 9 values that were used in the application type, and grouped the rest into an other category, so greater than 194, actually greater than 190 was specified as the classifcations to replace value. I then ran the one hot encoder, merged it with the original application df,
+and then tropped the originals that weren't numerical.
 
-The non-profit foundation Alphabet Soup wants to create an algorithm to predict whether or not applicants for funding will be successful. With your knowledge of machine learning and neural networks, you’ll use the features in the provided dataset to create a binary classifier that is capable of predicting whether applicants will be successful if funded by Alphabet Soup.
+I decided on the application Is Succesful for the features and target arrays, and there was no issue with the standard scalar instance.
 
-From Alphabet Soup’s business team, you have received a CSV containing more than 34,000 organizations that have received funding from Alphabet Soup over the years. Within this dataset are a number of columns that capture metadata about each organization, such as the following:
+Forgot to call the 5 period frequency for the fit statement, and so updated the starter code to accomidate the specification, got it to print and reuploaded.
 
-* **EIN** and **NAME**—Identification columns
-* **APPLICATION_TYPE**—Alphabet Soup application type
-* **AFFILIATION**—Affiliated sector of industry
-* **CLASSIFICATION**—Government organization classification
-* **USE_CASE**—Use case for funding
-* **ORGANIZATION**—Organization type
-* **STATUS**—Active status
-* **INCOME_AMT**—Income classification
-* **SPECIAL_CONSIDERATIONS**—Special consideration for application
-* **ASK_AMT**—Funding amount requested
-* **IS_SUCCESSFUL**—Was the money used effectively
 
-## Instructions
+Step 2: Comppile, Train and Evaluate the Model
 
-### Step 1: Preprocess the data
+The number of input features was left as the len(X_train[0]), the number of hidden nodes of the first hidden layer was decided to be 8, using a relu activation function. The number of layers for the second hidden layer was decided as 5, with a relu again for the activation function.
+The output layer was decided to be sigmoid, and the model was selected as 100 epochs, and it never got above 72% so was 3% off from the specified 75%, saved to alphabetsoupchairt.h5
 
-Using your knowledge of Pandas and the Scikit-Learn’s `StandardScaler()`, you’ll need to preprocess the dataset in order to compile, train, and evaluate the neural network model later in Step 2
+Step 3: Optimize the Model
 
-Using the information we have provided in the starter code, follow the instructions to complete the preprocessing steps.
+So to begin with, I utilized Google Colab’s ability to churn through the necessary number of iterations on each of the three attempts, as my first attempt was at 72%. 
+I followed the idea of using the different ‘Status’, ‘Is_Successful’ as the two binary functions. With ‘Status’, in attempt One, the values were reshaped to (-1, 1) and the number of hidden nodes for each of the two hidden layers were 7, and 8 respectively, with relu, relu and sigmoid as the three activation functions. 
+This churned out a 99.987% accuracy over 100 epochs, and when fitted to the model, it achieved 100% accuracy of the same number of epochs, with the activation function of ‘relu’ with 9 units in the first layer and 8 units in the second being the optimal build. 
 
-1. Read in the charity_data.csv to a Pandas DataFrame, and be sure to identify the following in your dataset:
-  * What variable(s) are considered the target(s) for your model?
-  * What variable(s) are considered the feature(s) for your model?
-2. Drop the `EIN` and `NAME` columns.
-3. Determine the number of unique values for each column.
-4. For those columns that have more than 10 unique values, determine the number of data points for each unique value.
-6. Use the number of data points for each unique value to pick a cutoff point to bin "rare" categorical variables together in a new value, `Other`, and then check if the binning was successful.
-7. Use `pd.get_dummies()` to encode categorical variables
+That achieved, I decided to change the activation function for the second and third attempts. 
+I began by attempting to see what the output of the 4 functions we had used in class were , relu, tahn, sigmoid and linear with mixed success. 
+In this I attempted to decrease the number binned variables, keeping the ‘application type’ at 9 values, the classification type at 9 values, and the Ask_Amount, down from 8747 values into bins of 5,000, 10,000, 25,000, 100,000, 500,000, 1 Million, 5 Million, and greater than 50+ Million. 
+This increased the number of values to 55, and the activation for this attempt was set at Is Successful. This Ask Amount overwrote the original Ask Amount with the new binned values, reducing  the number to 9 again. Even with the optimal increase in the number of epochs to 200, this  failed to break higher than the 73% of the pre-attempt. 
+There were 4 hidden layers, an increase of two over previous attempts but the first two were the only of consequence with 7 in the first and 9 in the second, the remaining where left at 1 value. And all were specified as the activation functions as sigmoid.
 
-### Step 2: Compile, Train, and Evaluate the Model
+The final attempt kept the bins of Ask Amount, decreased the number of Classifications to 6, the Application Type was decreased to 6 as well. 
+Is Successful as the other binary function was again used, with an attempt of two relu and three sigmoid layers, respectively in that order. 
+The number of values was decreased to some 50 columns, and the number of epochs was decreased to 150. 
+This unfortunately only achieved a 73.3% accuracy, as every other column had already been categorized, the models two targets, and the number of values that I was binning was decreasing the number of overall features but retaining the jist of what the columns represented there wasn’t really anything to be gained by decreasing further. 
 
-Using your knowledge of TensorFlow, you’ll design a neural network, or deep learning model, to create a binary classification model that can predict if an Alphabet Soup–funded organization will be successful based on the features in the dataset. You’ll need to think about how many inputs there are before determining the number of neurons and layers in your model. Once you’ve completed that step, you’ll compile, train, and evaluate your binary classification model to calculate the model’s loss and accuracy.
+Step 4: Write a Report on the Neural Network Model
 
-1. Continue using the jupter notebook where you’ve already performed the preprocessing steps from Step 1.
-2. Create a neural network model by assigning the number of input features and nodes for each layer using Tensorflow Keras.
-3. Create the first hidden layer and choose an appropriate activation function.
-4. If necessary, add a second hidden layer with an appropriate activation function.
-5. Create an output layer with an appropriate activation function.
-6. Check the structure of the model.
-7. Compile and train the model.
-8. Create a callback that saves the model's weights every 5 epochs.
-9. Evaluate the model using the test data to determine the loss and accuracy.
-10. Save and export your results to an HDF5 file, and name it `AlphabetSoupCharity.h5`.
-
-### Step 3: Optimize the Model
-
-Using your knowledge of TensorFlow, optimize your model in order to achieve a target predictive accuracy higher than 75%. If you can't achieve an accuracy higher than 75%, you'll need to make at least three attempts to do so.
-
-Optimize your model in order to achieve a target predictive accuracy higher than 75% by using any or all of the following:
-
-* Adjusting the input data to ensure that there are no variables or outliers that are causing confusion in the model, such as:
-  * Dropping more or fewer columns.
-  * Creating more bins for rare occurrences in columns.
-  * Increasing or decreasing the number of values for each bin.
-* Adding more neurons to a hidden layer.
-* Adding more hidden layers.
-* Using different activation functions for the hidden layers.
-* Adding or reducing the number of epochs to the training regimen.
-
-**NOTE**: You will not lose points if your model does not achieve target performance, as long as you make three attempts at optimizing the model in your jupyter notebook.
-
-1. Create a new Jupyter Notebook file and name it `AlphabetSoupCharity_Optimzation.ipynb`.
-2. Import your dependencies, and read in the `charity_data.csv` to a Pandas DataFrame.
-3. Preprocess the dataset like you did in Step 1, taking into account any modifications to optimize the model.
-4. Design a neural network model, taking into account any modifications that will optimize the model to achieve higher than 75% accuracy.
-5. Save and export your results to an HDF5 file, and name it `AlphabetSoupCharity_Optimization.h5`.
-
-### Step 4: Write a Report on the Neural Network Model
-
-For this part of the Challenge, you’ll write a report on the performance of the deep learning model you created for AlphabetSoup.
-
-The report should contain the following:
-
-1. **Overview** of the analysis: Explain the purpose of this analysis.
-
-2. **Results**: Using bulleted lists and images to support your answers, address the following questions.
-
-  * Data Preprocessing
-    * What variable(s) are considered the target(s) for your model?
-    * What variable(s) are considered to be the features for your model?
-    * What variable(s) are neither targets nor features, and should be removed from the input data?
-  * Compiling, Training, and Evaluating the Model
-    * How many neurons, layers, and activation functions did you select for your neural network model, and why?
-    * Were you able to achieve the target model performance?
-    * What steps did you take to try and increase model performance?
+I selected 7, and 8 neurons for the first attempt, 7, 7, 1 and 1 for the second attempt and 7, 9, 1, 1, and 1 for the third attempt. 
+I did not wish to increase the number of neurons beyond 8 for the most part, per our instructors’ specifications. I was able to achieve the target performance using the Status column, but not with the Is Successful column. 
+Overall there was a mix of changes to the number of hidden layers, the number of epochs ranged from 100, 200, and 150; the number of variables, was changed both by increasing and decreasing the number of values, unfortunately over many cycles beyond the three documented here, 
+the accuracy with Is Successful never broke through the 73% threshold that it hovered around, but if the Status was called as the feature then the model would quickly achieve 100% accuracy.
